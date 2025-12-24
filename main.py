@@ -3,7 +3,9 @@ from ai_player import AIPlayer
 from move import Move
 
 def main():
+  print("=" * 50)
   print("----- AI Chess Bot -----")
+  print("=" * 50)
 
   print("\nSelect game mode:")
   print("1. Human (White) vs AI (Black)")
