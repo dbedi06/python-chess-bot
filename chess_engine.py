@@ -73,15 +73,20 @@ class ChessGame:
     """Get all legal moves for a specific piece"""
     moves = []
     start_pos = piece.position
+    start_row, start_col = start_pos
 
     for row in range(8):
       for col in range(8):
         end_pos = (row, col)
-        if start_pos != end_pos and piece.is_valid_move(self.board, end_pos):
-          # Check if move doesn't leave king in check
-          if not self._move_causes_check(start_pos, end_pos, piece.color):
-            captured = self.board[row][col]
-            moves.append(Move(start_pos, end_pos, piece, captured))
+        if start_pos != end_pos:
+          # Create a temporary piece with updated position for validation
+          if piece.is_valid_move(self.board, end_pos):
+            # Check if move doesn't leave king in check
+            if not self._move_causes_check(start_pos, end_pos, piece.color):
+              captured = self.board[row][col]
+              # Create a move iwth acutal positions
+              move = Move(start_pos, end_pos, piece, captured)
+              moves.append(move)
 
     return moves
 
@@ -90,6 +95,10 @@ class ChessGame:
     # Make a temporary move
     temp_board = copy.deepcopy(self.board)
     temp_piece = temp_board[start_pos[0]][start_pos[1]]
+
+    if temp_piece is None:
+      return False
+
     temp_board[end_pos[0]][end_pos[1]] = temp_piece
     temp_board[start_pos[0]][start_pos[1]] = None
     temp_piece.position = end_pos
@@ -105,14 +114,21 @@ class ChessGame:
       if king_pos:
         break
 
+    if king_pos is None:
+      return False
+
     # Check if any opponent piece can attack the king
     opponent_color = 'black' if color == 'white' else 'white'
     for row in range(8):
       for col in range(8):
         piece = temp_board[row][col]
         if piece and piece.color == opponent_color:
-          if piece.is_valid_move(temp_board, king_pos):
-            return True
+          try:
+            if piece.is_valid_move(temp_board, king_pos):
+              return True
+          except:
+            # If validation fails, skip this piece
+            continue
 
     return False
 
@@ -124,7 +140,7 @@ class ChessGame:
     piece = self.board[start_row][start_col]
 
     # Move the piece
-    self.board[end_row][end_col]
+    self.board[end_row][end_col] = piece
     self.board[start_row][start_col] = None
     piece.position = move.end_pos
     piece.has_moved = True

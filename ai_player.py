@@ -49,7 +49,7 @@ class AIPlayer:
 
     return best_move
 
-  def minimax(self, game, depth, alpha, beta, is_maximizing):
+  def _minimax(self, game, depth, alpha, beta, is_maximizing):
     """Minimax algorithm with Alpha-Beta pruning"""
     self.nodes_evaluated += 1
 

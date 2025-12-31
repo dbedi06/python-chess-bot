@@ -47,6 +47,7 @@ def main():
       print("CHECK!!!")
 
     if human_color is None or game.current_turn != human_color:
+      print("AI is thinking...")
       best_move = ai.get_best_move(game)
 
       if best_move:

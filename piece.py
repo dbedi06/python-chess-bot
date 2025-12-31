@@ -23,19 +23,23 @@ class Pawn(Piece):
     end_row, end_col = end_pos
     direction = -1 if self.color == 'white' else 1
 
-    # Forward move
-    if start_col == end_col:
-      if end_row == start_row + direction and board[end_row][end_col] is None:
+    # Forward move (Regular)
+    if start_col == end_col and end_row == start_row + direction:
+      if board[end_row][end_col] is None:
         return True
 
-      # Double move from starting position
-      if not self.has_moved and end_row == start_row + 2 * direction:
-        if board[start_row + direction][start_col] is None and board[end_row][end_col] is None:
+    # Double move from starting position
+    if start_col == end_col and not self.has_moved:
+      start_rank = 6 if self.color == 'white' else 1
+      if start_row == start_rank and end_row == start_row + 2 * direction:
+        middle_row = start_row + direction
+        if board[middle_row][start_col] is None and board[end_row][end_col] is None:
           return True
 
     # Capture other pieces diagonally
     if abs(end_col - start_col) == 1 and end_row == start_row + direction:
-      if board[end_row][end_col] is not None and board[end_row][end_col].color != self.color:
+      target = board[end_row][end_col]
+      if target is not None and target.color != self.color:
         return True
 
     return False
